@@ -17,6 +17,11 @@ ScoreWindow::ScoreWindow(QWidget *parent)
     ui->setupUi(this);
     ui->files_listView->setModel(files_model);
 
+    //ui->files_listView->setStyleSheet("QListView::item{background: green;}");
+    //QString st = "QListView {show-decoration-selected: 1; }QListView::item:alternate {    background: #EEEEEE;}QListView::item:selected {    border: 1px solid #6a6ea9;}QListView::item:selected:!active {    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,stop: 0 #ABAFE5, stop: 1 #8588B2);}QListView::item:selected:active {    background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,stop: 0 #6a6ea9, stop: 1 #888dd9);}QListView::item:hover {background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #FAFBFE, stop: 1 #DCDEF1);}";
+    //ui->files_listView->setStyleSheet("font-size: 50px");
+    //ui->files_listView->setGridSize(QSize(100, 50));
+
     connect(ui->open_action, &QAction::triggered, this, &ScoreWindow::openFolder);
     connect(ui->filter_lineEdit, &QLineEdit::textChanged, this, &ScoreWindow::filterFiles);
     connect(ui->files_listView->selectionModel(), &QItemSelectionModel::currentChanged, this, &ScoreWindow::selectionChanged);

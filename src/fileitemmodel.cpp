@@ -1,5 +1,5 @@
 #include "fileitemmodel.h"
-
+#include <QBrush>
 
 
 FileItemModel::FileItemModel(QObject *parent)
@@ -44,6 +44,19 @@ QVariant FileItemModel::data(const QModelIndex &index, int role) const
 
     if(role == Qt::DisplayRole) {
         return files[index.row()];
+    }
+
+    if(role == Qt::BackgroundRole) {
+        if(index.row() % 2) {
+            return QBrush(Qt::cyan);
+        } else {
+            return QBrush(Qt::darkCyan);
+        }
+        return QVariant();
+    }
+
+    if(role == Qt::SizeHintRole) {
+        return QSize(50, 50);
     }
 
     return QVariant();
