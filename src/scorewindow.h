@@ -25,7 +25,7 @@ private slots:
 private:
     void updateFolderFiles();
     void filterFiles(QString filter_text);
-    void selectionChanged(const QModelIndex & index);
+    void selectionChanged(const QModelIndex & index, const QModelIndex & prev);
 
     Ui::ScoreWindow *ui;
 

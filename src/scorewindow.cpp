@@ -12,13 +12,14 @@ ScoreWindow::ScoreWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::ScoreWindow)
 {
+    files_model = new FileItemModel(this);
+
     ui->setupUi(this);
+    ui->files_listView->setModel(files_model);
+
     connect(ui->open_action, &QAction::triggered, this, &ScoreWindow::openFolder);
     connect(ui->filter_lineEdit, &QLineEdit::textChanged, this, &ScoreWindow::filterFiles);
-    connect(ui->files_listView, &QListView::clicked, this, &ScoreWindow::selectionChanged);
-
-    files_model = new FileItemModel(this);
-    ui->files_listView->setModel(files_model);
+    connect(ui->files_listView->selectionModel(), &QItemSelectionModel::currentChanged, this, &ScoreWindow::selectionChanged);
 }
 
 ScoreWindow::~ScoreWindow()
@@ -37,7 +38,6 @@ void ScoreWindow::openFolder() {
 }
 
 void ScoreWindow::updateFolderFiles() {
-    qDebug() << "repopulate list";
     ui->path_label->setText(folder_path);
     if(folder_path != "") {
         QDirIterator pdfIt(folder_path, {"*.pdf"}, QDir::Files, QDirIterator::Subdirectories|QDirIterator::FollowSymlinks);
@@ -68,7 +68,7 @@ void ScoreWindow::filterFiles(QString filter_text) {
 
 }
 
-void ScoreWindow::selectionChanged(const QModelIndex & index) {
+void ScoreWindow::selectionChanged(const QModelIndex & index, const QModelIndex & prev) {
     auto filename = folder_path + "/" + ui->files_listView->model()->data(index).toString();
     ui->preview_pdfview->setFile(filename);
 }
