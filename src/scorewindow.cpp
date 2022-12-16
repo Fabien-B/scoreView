@@ -5,6 +5,8 @@
 #include <QDirIterator>
 #include <QDebug>
 #include <QRegularExpression>
+#include "fileitemmodel.h"
+
 
 ScoreWindow::ScoreWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -13,7 +15,10 @@ ScoreWindow::ScoreWindow(QWidget *parent)
     ui->setupUi(this);
     connect(ui->open_action, &QAction::triggered, this, &ScoreWindow::openFolder);
     connect(ui->filter_lineEdit, &QLineEdit::textChanged, this, &ScoreWindow::filterFiles);
-    connect(ui->files_listWidget, &QListWidget::currentTextChanged, this, &ScoreWindow::selectionChanged);
+    connect(ui->files_listView, &QListView::clicked, this, &ScoreWindow::selectionChanged);
+
+    files_model = new FileItemModel(this);
+    ui->files_listView->setModel(files_model);
 }
 
 ScoreWindow::~ScoreWindow()
@@ -25,20 +30,22 @@ void ScoreWindow::openFolder() {
     auto base_path = folder_path != "" ? folder_path : QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
     folder_path = QFileDialog::getExistingDirectory(this, "Open folder", base_path);
     if(folder_path != "") {
-        ui->files_listWidget->clear();
+        files_model->clear();
     }
     updateFolderFiles();
     filterFiles(ui->filter_lineEdit->text());
 }
 
 void ScoreWindow::updateFolderFiles() {
+    qDebug() << "repopulate list";
     ui->path_label->setText(folder_path);
     if(folder_path != "") {
         QDirIterator pdfIt(folder_path, {"*.pdf"}, QDir::Files, QDirIterator::Subdirectories|QDirIterator::FollowSymlinks);
         while(pdfIt.hasNext()) {
             QString filename = pdfIt.next();
             filename.remove(0, folder_path.size()+1);
-            ui->files_listWidget->addItem(filename);
+
+            files_model->append(filename);
         }
     }
 }
@@ -50,17 +57,18 @@ void ScoreWindow::filterFiles(QString filter_text) {
 
     auto filter_regex = QRegularExpression(filter_text, QRegularExpression::CaseInsensitiveOption);
 
-    for(int i=0; i < ui->files_listWidget->count(); i++) {
-        auto item = ui->files_listWidget->item(i);
-        bool match = filter_regex.match(item->text()).hasMatch();
-        item->setHidden(!match);
+
+
+    for(int i=0; i < files_model->rowCount(); i++) {
+        auto mi = files_model->index(i);
+        auto filename = files_model->data(mi).toString();
+        bool match = filter_regex.match(filename).hasMatch();
+        ui->files_listView->setRowHidden(i, !match);
     }
 
 }
 
-void ScoreWindow::selectionChanged(QString text) {
-    auto filename = folder_path + "/" + text;
-    //emit filePreview(filename);
-    qDebug() << filename;
+void ScoreWindow::selectionChanged(const QModelIndex & index) {
+    auto filename = folder_path + "/" + ui->files_listView->model()->data(index).toString();
     ui->preview_pdfview->setFile(filename);
 }

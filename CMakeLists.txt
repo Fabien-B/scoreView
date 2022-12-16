@@ -19,6 +19,7 @@ set(PROJECT_SOURCES
         src/scorewindow.ui
         #src/pdfview.h
         src/pdfview.cpp
+        src/fileitemmodel.h src/fileitemmodel.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

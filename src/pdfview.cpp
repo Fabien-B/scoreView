@@ -26,7 +26,6 @@ void PdfView::paintEvent(QPaintEvent *event) {
             auto page_size = pdfPage->pageSize();
             double w_ratio = static_cast<double>(rect().height()) / page_size.width();
             double h_ratio = static_cast<double>(rect().width()) / page_size.height();
-            qDebug() << rect() << size() << sizeHint() << w_ratio << h_ratio;
             //document->setRenderHint(Poppler::Document::TextAntialiasing);
             //document->setRenderHint(Poppler::Document::Antialiasing);
             //document->setRenderHint(Poppler::Document::ThinLineSolid);
@@ -34,7 +33,6 @@ void PdfView::paintEvent(QPaintEvent *event) {
 
 
             int dpi = qMin(w_ratio, h_ratio) * 72;
-            qDebug() << dpi;
             QImage image = pdfPage->renderToImage(dpi, dpi, -1, -1, -1, -1, Poppler::Page::Rotate270);
             //QImage rotatedImg = image.transformed(QMatrix().rotate(90.0));
             //QImage rotatedImg = image.transformed(QTransform(QMatrix().rotate(-90)));

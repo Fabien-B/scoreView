@@ -2,6 +2,7 @@
 #define SCOREWINDOW_H
 
 #include <QMainWindow>
+#include "fileitemmodel.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class ScoreWindow; }
@@ -24,9 +25,11 @@ private slots:
 private:
     void updateFolderFiles();
     void filterFiles(QString filter_text);
-    void selectionChanged(QString text);
+    void selectionChanged(const QModelIndex & index);
 
     Ui::ScoreWindow *ui;
+
+    FileItemModel* files_model;
 
     QString folder_path;
 };
